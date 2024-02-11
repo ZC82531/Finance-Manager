@@ -1,3 +1,4 @@
+// Many middleware functions are incorporated here.
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');

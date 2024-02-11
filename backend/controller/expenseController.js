@@ -1,92 +1,112 @@
 const expenseModel = require('../db/expenseModel');
 const userModel = require('../db/userModel');
-const sendEmailWithAttachment = require('../utils/emailSend');
 const { error, success } = require('../utils/handler');
 
-const createExpense =async (req,res)=>{
+/**
+ * Creates a new expense entry.
+ */
+const createExpense = async (req, res) => {
     try {
-        const {amount , category , date , usersid} = req.body;
-        if(!amount || !category || !date || !usersid)
-        {
-            return res.send(error(401,"All Details Are Required"));
+        // Destructure required fields from request body
+        const { amount, category, date, usersid } = req.body;
+        
+        // Check for missing fields
+        if (!amount || !category || !date || !usersid) {
+            return res.send(error(401, "All Details Are Required"));
         }
+
+        // Create the new expense
         const newExpense = await expenseModel.create(req.body);
+
+        // Find the user and populate their expense list
         const userToUse = await userModel.findById(usersid).populate('expense_id');
-        // console.log(userToUse)
+        
+        // Add the new expense ID to the user's expense list
         userToUse.expense_id.push(newExpense._id);
+        
+        // Save the new expense and update the user
         newExpense.save();
         userToUse.save();
-        return res.send(success(200,newExpense))
         
+        // Send success response
+        return res.send(success(200, newExpense));
     } catch (e) {
-        return res.send(error(401,e.message))
+        // Handle errors
+        return res.send(error(401, e.message));
     }
-}
+};
 
-const deleteExpense = async (req,res)=>{
+/**
+ * Deletes an expense entry.
+ */
+const deleteExpense = async (req, res) => {
     try {
-        const {expenseId , userId} = req.body;
-        
+        // Extract expenseId and userId from request body
+        const { expenseId, userId } = req.body;
 
-        const expense = await expenseModel.findById(expenseId)
+        // Find the expense and user
+        const expense = await expenseModel.findById(expenseId);
         const user = await userModel.findById(userId);
 
-        if(!expense || !user)
-        {
-            return res.send(error(401,`Invalid ${!expense } + ${!user}`))
+        // Check if both expense and user exist
+        if (!expense || !user) {
+            return res.send(error(401, `Invalid ${!expense} + ${!user}`));
         }
-        
-        if(user.expense_id.includes(expenseId))
-        {
-            
-            await expenseModel.findByIdAndDelete(expenseId);
-            console.log(user.expense_id);
-            const index =  user.expense_id.indexOf(expenseId);
-            console.log("here " + index);
-            user.expense_id.splice(index,1);
-        }
-        await user.save();
-       return res.send(success(201,{respo : 'Successfully Deleted' , user}));
-    } catch (e) {
-       return res.send(error(401,e.message))
-    }
-}
 
-const getAllExpenses = async (req,res)=>{
+        // If the user has the expense, delete it
+        if (user.expense_id.includes(expenseId)) {
+            await expenseModel.findByIdAndDelete(expenseId);
+            
+            // Remove the expense ID from the user's list
+            const index = user.expense_id.indexOf(expenseId);
+            user.expense_id.splice(index, 1);
+        }
+
+        // Save the updated user
+        await user.save();
+
+        // Send success response
+        return res.send(success(201, { respo: 'Successfully Deleted', user }));
+    } catch (e) {
+        // Handle errors
+        return res.send(error(401, e.message));
+    }
+};
+
+/**
+ * Retrieves all expenses associated with a user.
+ */
+const getAllExpenses = async (req, res) => {
     try {
-        
-        const {userId} = req.body;
+        // Extract userId from request body
+        const { userId } = req.body;
+
+        // Find the user and populate their expense list
         const user = await userModel.findById(userId).populate('expense_id');
         
-        return res.send(success(200,user.expense_id.sort()));
+        // Send success response with sorted expenses
+        return res.send(success(200, user.expense_id.sort()));
     } catch (e) {
-        return res.send(error(401,e.message))   
+        // Handle errors
+        return res.send(error(401, e.message));
     }
-}
+};
 
-const getCategoryExpense = async (req,res)=>{
+/**
+ * Retrieves expenses filtered by category (currently unimplemented).
+ */
+const getCategoryExpense = async (req, res) => {
     try {
-        
+        // Implementation to be added
     } catch (e) {
-        return res.send(error(401,e.message))
+        // Handle errors
+        return res.send(error(401, e.message));
     }
-}
-
-const emailSender = (req,res)=>{
-    try {
-        const {recipient , body} = req.body;
-        sendEmailWithAttachment(recipient,body);
-        return res.send(success(201,"Email Sent"))
-    } catch (error) {
-        return res.send(error(401,"Email Is Wrong"))
-    }
-}
-
+};
 
 module.exports = {
-    createExpense ,
-    deleteExpense , 
-    getCategoryExpense ,
+    createExpense,
+    deleteExpense,
+    getCategoryExpense,
     getAllExpenses,
-    emailSender
-}
+};
