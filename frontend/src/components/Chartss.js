@@ -5,57 +5,72 @@ import { sortCategoryWise } from '../utils/seperator';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
+const CATEGORIES = ['Grocery', 'Vehicle', 'Shopping', 'Travel', 'Food', 'Fun', 'Other'];
 
-export function Chartss(props) {
+const BG_COLORS = [
+  'rgba(239,68,68,0.8)',
+  'rgba(59,130,246,0.8)',
+  'rgba(234,179,8,0.8)',
+  'rgba(20,184,166,0.8)',
+  'rgba(168,85,247,0.8)',
+  'rgba(249,115,22,0.8)',
+  'rgba(107,114,128,0.8)',
+];
 
-  let categories = ['Grocery', 'Vehicle', 'Shopping', 'Travel', 'Food','Fun','Other'];
-  const totalexp = sortCategoryWise(props.exdata , categories);
+const BORDER_COLORS = [
+  'rgba(239,68,68,1)',
+  'rgba(59,130,246,1)',
+  'rgba(234,179,8,1)',
+  'rgba(20,184,166,1)',
+  'rgba(168,85,247,1)',
+  'rgba(249,115,22,1)',
+  'rgba(107,114,128,1)',
+];
 
-const data = {
-  labels: ['Grocery', 'Vehicle', 'Shopping', 'Travel', 'Food','Fun','Other'],
-  datasets: [
-    {
-      label: "USD",
-      data: totalexp,
-      backgroundColor: [
-        'rgba(255, 99, 132, 0.4)',
-        'rgba(54, 162, 235, 0.4)',
-        'rgba(255, 206, 86, 0.4)',
-        'rgba(75, 192, 192, 0.4)',
-        'rgba(153, 102, 255, 0.4)',
-        'rgba(230, 57, 70,0.4)',
-        'rgba(255, 159, 64, 0.4)',
-      ],
-      borderColor: [
-        'rgba(255, 99, 132, 1)',
-        'rgba(54, 162, 235, 1)',
-        'rgba(255, 206, 86, 1)',
-        'rgba(75, 192, 192, 1)',
-        'rgba(153, 102, 255, 1)',
-        'rgba(230, 57, 70,1)',
-        'rgba(255, 159, 64, 1)',
-      ],
-      borderWidth: 2,
-    },
-  ],
-  options: {
-    
-    plugins: {
+export function Chartss({ exdata }) {
+  const totals = sortCategoryWise(exdata, CATEGORIES);
 
-     labels: {
-
-          arc : false,
-          percision : 1,
-          fontSize : 20
+  const data = {
+    labels: CATEGORIES,
+    datasets: [
+      {
+        label: 'USD',
+        data: totals,
+        backgroundColor: BG_COLORS,
+        borderColor: BORDER_COLORS,
+        borderWidth: 2,
+        hoverOffset: 10,
       },
-  },
-  },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          color: '#d1d5db',
+          padding: 20,
+          usePointStyle: true,
+          pointStyleWidth: 10,
+          font: { size: 13, family: 'Montserrat' },
+        },
+      },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => `  $${ctx.parsed.toFixed(2)}`,
+        },
+      },
+    },
+  };
+
+  return (
+    <div style={{ position: 'relative', height: '320px' }}>
+      <Doughnut data={data} options={options} />
+    </div>
+  );
 }
 
-
-;
-
-
-  return <Doughnut className='w-full h-full' data={data} />;
-}
 

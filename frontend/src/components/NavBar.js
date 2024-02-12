@@ -12,7 +12,7 @@ function NavBar() {
     try {
       ref.current.staticStart();
       localStorage.removeItem('User');
-      toast.success("Logout Successfully!!");
+      toast.success('Logged out');
       ref.current.complete();
       navigate('/login');
     } catch (error) {
@@ -21,21 +21,20 @@ function NavBar() {
   };
 
   return (
-    <div className='flex justify-between items-center h-24 bg-neutral-950 px-6'>
-      {/* Logo */}
-      <div className='text-white font-bold text-3xl'>
-        <span className='text-green-600'>Expense</span> Tracker
+    <nav className='flex justify-between items-center h-16 bg-gray-900 border-b border-gray-800 px-6'>
+      <div className='text-white font-bold text-2xl tracking-tight'>
+        <span className='text-indigo-400'>Expense</span> Tracker
       </div>
-
-      {/* Logout Button */}
-      <a href="#_" onClick={logoutHandle} className='ml-6 text-lg text-white'>
+      <button
+        onClick={logoutHandle}
+        className='text-sm text-gray-400 hover:text-white transition'
+      >
         Log Out
-      </a>
-
-      {/* Loading Bar */}
-      <LoadingBar color='orange' ref={ref} />
-    </div>
+      </button>
+      <LoadingBar color='#6366f1' ref={ref} />
+    </nav>
   );
 }
 
 export default NavBar;
+

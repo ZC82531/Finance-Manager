@@ -13,7 +13,7 @@ export const sortCategoryWise = (expdata,categories)=>{
     }
     let arr = [];
 
-    for(let [key,value] of total)
+    for(let [,value] of total)
     {
         arr.push(value);
     }

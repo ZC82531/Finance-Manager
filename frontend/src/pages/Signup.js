@@ -97,7 +97,7 @@ function Signup() {
             }`}
           >
             <span className='absolute left-0 top-0 w-full h-full bg-gradient-to-r from-pink-500 to-pink-600 transition duration-300'></span>
-            <span className='relative z-10'>Submit</span> // Submit button text
+            <span className='relative z-10'>Submit</span>
           </button>
         </form>
       </div>
