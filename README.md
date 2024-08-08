@@ -17,6 +17,11 @@
    - Click the button to receive personalized advice based on your financial breakdown.
 
 Feel free to explore the site and utilize the tools provided for better financial management.
+ 1. There is a similar application built to put in expenses, and get recommended life insurance, annuity, and pension. Please use separate account information for each site.
+ [Log In](https://insurance-manager.netlify.app/login#_).
+
+![Description of the image](https://i.imgur.com/qJi5PIN.png)
+
 
 ## Watch a Demonstration Video
 
